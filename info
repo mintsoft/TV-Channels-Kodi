@@ -34,3 +34,4 @@ WHERE
 
 # delete all freesats
  --DELETE FROM map_channelgroups_channels  WHERE idGroup = (SELECT idGroup FROM channelgroups WHERE channelgroups.sName = 'Freesat (TV)')
+

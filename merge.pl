@@ -36,8 +36,19 @@ close $channelslist;
 
 for my $channel (keys %channelTuning) {
 	if(defined $freesatNames{$channel}) {
-		print "$freesatNames{$channel},$freesatRealNames{$channel},$channelTuning{$channel}\n" ;
+		my $channelNumber = $freesatNames{$channel};
+		my $channelName = $freesatRealNames{$channel};
+		my $channelTuning = $channelTuning{$channel};	
+		print qq`
+INSERT INTO map_channelgroups_channels (idChannel, idGroup, iChannelNumber, iSubChannelNumber, iOrder, iClientChannelNumber, iClientSubChannelNumber)
+SELECT map_channelgroups_channels.idChannel, 3 AS idGroup, $channelNumber, iSubChannelNumber, iOrder, iClientChannelNumber, iClientSubChannelNumber FROM map_channelgroups_channels 
+	INNER JOIN channels ON channels.idChannel = map_channelgroups_channels.idChannel
+WHERE 
+	channels.idChannel = (SELECT MIN(idChannel) FROM channels WHERE channels.sChannelName = '$channelName') 
+	AND map_channelgroups_channels.idGroup = 1;
+`;
 	}
 }
 
-print $/.$/.$maxChannelNum;
+
+
