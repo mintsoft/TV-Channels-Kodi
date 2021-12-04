@@ -1,0 +1,11 @@
+
+
+list everything for the given bouquet from zgemma2s:
+
+curl 'http://zgemma2s/ajax/channels?id=1%3A7%3A1%3A0%3A0%3A0%3A0%3A0%3A0%3A0%3AFROM%20BOUQUET%20%22userbouquet.freesat__tv_.tv%22%20ORDER%20BY%20bouquet&stype=tv'  > html
+grep Zap html  | sed 's/.*zapChannel\(.\+\);.*$/\1/' > channels
+# get names vs channel ids:
+
+cat channels  | sed  "s/^.'\([0-9A-F\:]\+\)', '\([^']\+\)'.$/\2,\1/"
+freesat numbers vs names:  http://www.tvchannelguide.co.uk/freesat.php
+take that list and customise it for region
