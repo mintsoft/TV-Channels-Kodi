@@ -9,3 +9,28 @@ grep Zap html  | sed 's/.*zapChannel\(.\+\);.*$/\1/' > channels
 cat channels  | sed  "s/^.'\([0-9A-F\:]\+\)', '\([^']\+\)'.$/\2,\1/"
 freesat numbers vs names:  http://www.tvchannelguide.co.uk/freesat.php
 take that list and customise it for region
+
+
+
+# we need to add a group into KODI called "Freesat (TV)" which we'll assume is channelgroup.idGroup = 3;
+# if isn't then we need to add another one instead.
+
+
+# show channels in freesat
+SELECT * 
+	FROM map_channelgroups_channels 
+		INNER JOIN channels ON (channels.idChannel = map_channelgroups_channels.idChannel)
+WHERE map_channelgroups_channels.idGroup = 3
+
+# add channel from "all" into freesat:
+
+INSERT INTO map_channelgroups_channels
+(idChannel, idGroup, iChannelNumber, iSubChannelNumber, iOrder, iClientChannelNumber, iClientSubChannelNumber)
+SELECT map_channelgroups_channels.idChannel, 3 AS idGroup, iChannelNumber, iSubChannelNumber, iOrder, iClientChannelNumber, iClientSubChannelNumber FROM map_channelgroups_channels 
+	INNER JOIN channels ON channels.idChannel = map_channelgroups_channels.idChannel
+WHERE 
+	channels.idChannel = (SELECT MIN(idChannel) FROM channels WHERE channels.sChannelName = 'BBC One HD') 
+	AND map_channelgroups_channels.idGroup = 1;
+
+# delete all freesats
+ --DELETE FROM map_channelgroups_channels  WHERE idGroup = (SELECT idGroup FROM channelgroups WHERE channelgroups.sName = 'Freesat (TV)')
