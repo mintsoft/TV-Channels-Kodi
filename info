@@ -1,37 +1,7 @@
- none of this works that well, the best way is to maintain the bouquet on the zgemma2 and have kodi use that
+Create a bouquet on zgemma2s called Freesat (TV)
+then extract:
 
-list everything for the given bouquet from zgemma2s:
+curl 'http://zgemma2s/bouqueteditor/api/backup?Filename=bouquets_backup_now'
+wget 'http://zgemma2s/bouqueteditor/tmp/bouquets_backup_now.tar'
 
-curl 'http://zgemma2s/ajax/channels?id=1%3A7%3A1%3A0%3A0%3A0%3A0%3A0%3A0%3A0%3AFROM%20BOUQUET%20%22userbouquet.freesat__tv_.tv%22%20ORDER%20BY%20bouquet&stype=tv'  > html
-grep Zap html  | sed 's/.*zapChannel\(.\+\);.*$/\1/' > channels
-# get names vs channel ids:
-
-cat channels  | sed  "s/^.'\([0-9A-F\:]\+\)', '\([^']\+\)'.$/\2,\1/"
-freesat numbers vs names:  http://www.tvchannelguide.co.uk/freesat.php
-take that list and customise it for region
-
-
-
-# we need to add a group into KODI called "Freesat (TV)" which we'll assume is channelgroup.idGroup = 3;
-# if isn't then we need to add another one instead.
-
-
-# show channels in freesat
-SELECT * 
-	FROM map_channelgroups_channels 
-		INNER JOIN channels ON (channels.idChannel = map_channelgroups_channels.idChannel)
-WHERE map_channelgroups_channels.idGroup = 3
-
-# add channel from "all" into freesat:
-
-INSERT INTO map_channelgroups_channels
-(idChannel, idGroup, iChannelNumber, iSubChannelNumber, iOrder, iClientChannelNumber, iClientSubChannelNumber)
-SELECT map_channelgroups_channels.idChannel, 3 AS idGroup, iChannelNumber, iSubChannelNumber, iOrder, iClientChannelNumber, iClientSubChannelNumber FROM map_channelgroups_channels 
-	INNER JOIN channels ON channels.idChannel = map_channelgroups_channels.idChannel
-WHERE 
-	channels.idChannel = (SELECT MIN(idChannel) FROM channels WHERE channels.sChannelName = 'BBC One HD') 
-	AND map_channelgroups_channels.idGroup = 1;
-
-# delete all freesats
- --DELETE FROM map_channelgroups_channels  WHERE idGroup = (SELECT idGroup FROM channelgroups WHERE channelgroups.sName = 'Freesat (TV)')
-
+curl 'http://zgemma2s/ajax/channels?id=1%3A7%3A1%3A0%3A0%3A0%3A0%3A0%3A0%3A0%3AFROM%20BOUQUET%20%22userbouquet.freesat__tv_.tv%22%20ORDER%20BY%20bouquet&stype=tv' > html
