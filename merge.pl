@@ -34,13 +34,15 @@ while (my $channelline = <$channelslist>) {
 }
 close $channelslist;
 
+print "#NAME Freesat (TV)\r\n";
+
 for my $channel (sort keys %freesatNums) {
 	my $num = $channel;
 	my $name = $freesatNums{$channel};
 	my $tuning = $channelTuning{uc($name)};
 #	print "$num $name $tuning\n";
 	if($tuning) {
-		print "#SERVICE $tuning\n";
+		print "#SERVICE $tuning\r\n";
 	}
 }
 
